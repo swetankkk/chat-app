@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { login } from '../services/api';
+import { register } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-function Login() {
-	const [identifier, setIdentifier] = useState('');
+export default function Signup() {
+	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const { login: loginUser } = useAuth();
 	const navigate = useNavigate();
@@ -14,32 +15,41 @@ function Login() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			const response = await login(identifier, password);
+			const response = await register(username, email, password);
 			loginUser(response.data.user);
 			localStorage.setItem('jwt', response.data.jwt);
 			navigate('/home');
-		} catch (error: any) {
-			//console.error('error :', error);
+		} catch (error) {
 			setError(error.response.data.error.message);
+			//console.error(error);
 		}
 	};
-
 	return (
-		<div className='flex flex-col items-center justify-center h-screen bg-black text-white'>
+		<div className='flex flex-col items-center justify-center h-screen bg-black '>
 			<div className='flex flex-col items-center justify-center gap-4'>
-				<h1 className='text-3xl font-bold'>Let's Chat</h1>
+				<h1 className='text-3xl font-bold text-white'>Let's Chat</h1>
 				<form
 					className='flex flex-col items-center justify-center gap-4'
 					onSubmit={handleSubmit}
 				>
 					<div className='flex flex-col items-center justify-center gap-2'>
 						<input
+							type='text'
+							id='username'
+							placeholder='Your username'
+							className=' rounded-md p-2 w-64'
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+						/>
+					</div>
+					<div className='flex flex-col items-center justify-center gap-2'>
+						<input
 							type='email'
 							id='email'
 							placeholder='Your email'
-							className='  rounded-md p-2 w-64 text-black'
-							value={identifier}
-							onChange={(e) => setIdentifier(e.target.value)}
+							className=' rounded-md p-2 w-64'
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
 						/>
 					</div>
 					<div className='flex flex-col items-center justify-center gap-2'>
@@ -47,20 +57,18 @@ function Login() {
 							type='password'
 							id='password'
 							placeholder='Your password'
-							className='rounded-md p-2 w-64 text-black'
-							value={password}
+							className=' rounded-md p-2 w-64'
 							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</div>
 					{error && <div className='text-red-500'>{error}</div>}
-					<Button className='bg-blue-500 w-64 hover:bg-blue-600'>Login</Button>
+
+					<Button className='bg-blue-500 w-64 hover:bg-blue-600'>Signup</Button>
 				</form>
-				<div>
-					Don't Have an Account? <Link to={`/signup`}>SignUp</Link>
+				<div className='text-white'>
+					Already Have an Account? <Link to={`/login`}>LogIn</Link>
 				</div>
 			</div>
 		</div>
 	);
 }
-
-export default Login;
