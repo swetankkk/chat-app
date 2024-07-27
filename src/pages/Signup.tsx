@@ -20,7 +20,11 @@ export default function Signup() {
 			localStorage.setItem('jwt', response.data.jwt);
 			navigate('/home');
 		} catch (error) {
-			setError(error.response.data.error.message);
+			if (error instanceof Error) {
+				setError(error.message);
+			} else {
+				setError('An unknown error occurred');
+			}
 			//console.error(error);
 		}
 	};
